@@ -1,0 +1,9 @@
+pipeline {
+  agent any
+  stages {
+    stage('Build order') { steps { sh 'cd order-service && mvn -B -DskipTests package' } }
+    stage('Build payment') { steps { sh 'cd payment-service && mvn -B -DskipTests package' } }
+    stage('Docker Build') { steps { sh 'docker build -t order-service:local ./order-service && docker build -t payment-service:local ./payment-service' } }
+    stage('Deploy Dev') { steps { sh 'docker-compose up -d' } }
+  }
+}

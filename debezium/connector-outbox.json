@@ -1,0 +1,15 @@
+{
+  "name": "orders-outbox-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "tasks.max": "1",
+    "database.hostname": "postgres",
+    "database.port": "5432",
+    "database.user": "demo",
+    "database.password": "demo",
+    "database.dbname": "ordersdb",
+    "database.server.name": "dbserver1",
+    "table.include.list": "public.outbox",
+    "plugin.name": "pgoutput"
+  }
+}

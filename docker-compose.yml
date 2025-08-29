@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    ports: ['2181:2181']
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    depends_on: ['zookeeper']
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    ports: ['9092:9092']
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports: ['5672:5672', '15672:15672']
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: demo
+      POSTGRES_PASSWORD: demo
+      POSTGRES_DB: ordersdb
+    ports: ['5432:5432']
+
+  order-service:
+    build: ./order-service
+    depends_on: ['postgres','kafka']
+    ports: ['8081:8081']
+
+  payment-service:
+    build: ./payment-service
+    depends_on: ['rabbitmq','kafka']
+    ports: ['8082:8082']
+
+  react-storefront:
+    build: ./react-storefront
+    ports: ['3000:3000']
